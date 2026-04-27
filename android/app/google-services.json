@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "493582876285",
+    "project_id": "thriftthem-3b760",
+    "storage_bucket": "thriftthem-3b760.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493582876285:android:060c02de8b1773bd89bb14",
+        "android_client_info": {
+          "package_name": "com.example.thriftthem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGu7denvq3PukpAhfvqHFuzbp37mlnd6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
