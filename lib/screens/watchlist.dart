@@ -37,6 +37,11 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
         title: const Text('Thrifthem'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.notifications_active_outlined),
+            tooltip: 'Test notification',
+            onPressed: () => context.read<ItemProvider>().testNotification(),
+          ),
+          IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
             tooltip: 'Bought archive',
             onPressed: () => Navigator.push(context,

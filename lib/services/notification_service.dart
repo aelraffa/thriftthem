@@ -8,6 +8,9 @@ class NotificationService {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const settings = InitializationSettings(android: android);
     await _plugin.initialize(settings);
+    
+    // Request permission secara otomatis saat init
+    await requestPermission();
   }
 
   Future<void> requestPermission() async {
@@ -19,7 +22,7 @@ class NotificationService {
 
   Future<void> checkAndNotifyStaleItems(
       List<ItemModel> items, {
-        int thresholdDays = 7,
+        int thresholdDays = 0,
       }) async {
     final stale = items
         .where((i) =>
@@ -37,8 +40,9 @@ class NotificationService {
         'watchlist_channel',
         'Watchlist Reminders',
         channelDescription: 'Reminders for items sitting in your watchlist',
-        importance: Importance.defaultImportance,
-        priority: Priority.defaultPriority,
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: true,
       ),
     );
 

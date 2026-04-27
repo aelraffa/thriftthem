@@ -145,6 +145,12 @@ class ItemProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> testNotification() async {
+    if (_items.isNotEmpty) {
+      await _notifications.checkAndNotifyStaleItems(_items, thresholdDays: 0);
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();

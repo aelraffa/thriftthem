@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/item_provider.dart';
 import '../utils/constants.dart';
 import '../utils/date_util.dart' as du;
@@ -62,8 +62,8 @@ class ArchiveScreen extends StatelessWidget {
                   width: 56,
                   height: 56,
                   child: item.photoPath.isNotEmpty
-                      ? CachedNetworkImage(
-                    imageUrl: item.photoPath,
+                      ? Image.file(
+                    File(item.photoPath),
                     fit: BoxFit.cover,
                   )
                       : Container(
