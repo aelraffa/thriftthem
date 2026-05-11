@@ -8,6 +8,7 @@ import '../utils/constants.dart';
 import 'add_item.dart';
 import 'item_detail.dart';
 import 'archive.dart';
+import 'detector_screen.dart';
 
 class WatchlistScreen extends StatefulWidget {
   const WatchlistScreen({super.key});
@@ -39,7 +40,8 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_active_outlined),
             tooltip: 'Test notification',
-            onPressed: () => context.read<ItemProvider>().testNotification(),
+            onPressed: () =>
+                context.read<ItemProvider>().testNotification(),
           ),
           IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
@@ -81,7 +83,8 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
             child: items.isEmpty
                 ? _EmptyState()
                 : GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+              padding:
+              const EdgeInsets.fromLTRB(16, 8, 16, 100),
               gridDelegate:
               const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -104,13 +107,39 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddItemScreen()),
-        ),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Find'),
+
+      // ------------------------------------------------------------ //
+      //  Two FABs: Scan with AI (new) + Add Find (existing)           //
+      // ------------------------------------------------------------ //
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Secondary FAB — opens live YOLO detector
+          FloatingActionButton(
+            heroTag: 'fab_scan',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const DetectorScreen()),
+            ),
+            backgroundColor: AppColors.primaryLight,
+            child: const Icon(Icons.document_scanner_outlined,
+                color: AppColors.primary),
+            tooltip: 'Scan with AI',
+          ),
+          const SizedBox(height: 12),
+          // Primary FAB — goes directly to add item (original behaviour)
+          FloatingActionButton.extended(
+            heroTag: 'fab_add',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddItemScreen()),
+            ),
+            icon: const Icon(Icons.add),
+            label: const Text('Add Find'),
+          ),
+        ],
       ),
     );
   }
@@ -146,7 +175,8 @@ class _EmptyState extends StatelessWidget {
           const Text(
             'Spot something at a thrift market?\nTap + Add Find to save it.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            style: TextStyle(
+                fontSize: 14, color: AppColors.textSecondary),
           ),
         ],
       ),

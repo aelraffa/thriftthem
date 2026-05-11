@@ -8,7 +8,10 @@ import '../utils/constants.dart';
 import '../widgets/tag_chip.dart';
 
 class AddItemScreen extends StatefulWidget {
-  const AddItemScreen({super.key});
+  // Optional name passed in from the detector screen.
+  final String? detectedName;
+
+  const AddItemScreen({super.key, this.detectedName});
 
   @override
   State<AddItemScreen> createState() => _AddItemScreenState();
@@ -26,6 +29,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
   String _locLabel = '';
   List<String> _tags = [];
   bool _isGettingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill name if coming from the detector screen.
+    if (widget.detectedName != null) {
+      _nameCtrl.text = widget.detectedName!;
+    }
+  }
 
   @override
   void dispose() {
@@ -51,8 +63,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
     setState(() => _isGettingLocation = true);
     try {
       final pos = await _locationService.getCurrentPosition();
-      final label =
-      await _locationService.getAddressFromCoords(pos.latitude, pos.longitude);
+      final label = await _locationService.getAddressFromCoords(
+          pos.latitude, pos.longitude);
       setState(() {
         _lat = pos.latitude;
         _long = pos.longitude;
@@ -100,7 +112,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
       return;
     }
 
-    final price = int.tryParse(_priceCtrl.text.replaceAll(RegExp(r'[^\d]'), ''));
+    final price =
+    int.tryParse(_priceCtrl.text.replaceAll(RegExp(r'[^\d]'), ''));
     if (price == null) {
       _showError('Invalid price.');
       return;
@@ -121,14 +134,14 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(msg), backgroundColor: AppColors.danger),
+      SnackBar(content: Text(msg), backgroundColor: AppColors.danger),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = context.watch<ItemProvider>().isLoading;
+    final cameFromDetector = widget.detectedName != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -145,7 +158,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
             )
                 : const Text('Save',
                 style: TextStyle(
-                    color: AppColors.primary, fontWeight: FontWeight.w600)),
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -154,7 +168,39 @@ class _AddItemScreenState extends State<AddItemScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Photo picker
+            // -------------------------------------------------------- //
+            //  AI detected badge — shown when coming from detector      //
+            // -------------------------------------------------------- //
+            if (cameFromDetector) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: AppColors.primary, width: 1),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.auto_awesome,
+                        color: AppColors.primary, size: 16),
+                    SizedBox(width: 8),
+                    Text(
+                      'Item name detected by YOLO — feel free to edit!',
+                      style: TextStyle(
+                          color: AppColors.primaryDark, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // -------------------------------------------------------- //
+            //  Photo picker                                              //
+            // -------------------------------------------------------- //
             GestureDetector(
               onTap: _pickImage,
               child: Container(
@@ -173,11 +219,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 child: _imageFile != null
                     ? ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.file(_imageFile!, fit: BoxFit.cover),
+                  child:
+                  Image.file(_imageFile!, fit: BoxFit.cover),
                 )
-                    : Column(
+                    : const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.camera_alt_outlined,
                         size: 36, color: AppColors.primary),
                     SizedBox(height: 8),
@@ -191,7 +238,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Name
+            // -------------------------------------------------------- //
+            //  Item name                                                 //
+            // -------------------------------------------------------- //
             TextField(
               controller: _nameCtrl,
               decoration: const InputDecoration(labelText: 'Item name'),
@@ -199,7 +248,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
             ),
             const SizedBox(height: 14),
 
-            // Price
+            // -------------------------------------------------------- //
+            //  Price                                                     //
+            // -------------------------------------------------------- //
             TextField(
               controller: _priceCtrl,
               keyboardType: TextInputType.number,
@@ -210,7 +261,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Location pin
+            // -------------------------------------------------------- //
+            //  Location pin                                              //
+            // -------------------------------------------------------- //
             const Text('Location',
                 style: TextStyle(
                     fontSize: 13,
@@ -222,9 +275,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: _lat != null
-                      ? AppColors.primaryLight
-                      : Colors.white,
+                  color:
+                  _lat != null ? AppColors.primaryLight : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: _lat != null
@@ -240,7 +292,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.primary),
+                          strokeWidth: 2,
+                          color: AppColors.primary),
                     )
                         : Icon(
                       _lat != null
@@ -274,7 +327,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Tags
+            // -------------------------------------------------------- //
+            //  Tags                                                      //
+            // -------------------------------------------------------- //
             const Text('Tags',
                 style: TextStyle(
                     fontSize: 13,
@@ -288,7 +343,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     controller: _tagCtrl,
                     decoration: const InputDecoration(
                       hintText: 'e.g. denim, vintage, jacket',
-                      hintStyle: TextStyle(color: AppColors.textSecondary),
+                      hintStyle:
+                      TextStyle(color: AppColors.textSecondary),
                     ),
                     onSubmitted: _addTag,
                   ),
