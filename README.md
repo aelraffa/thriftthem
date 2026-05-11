@@ -32,6 +32,12 @@ A Flutter app for tracking thrift store finds. Spot something you like? Log it w
 - Camera or gallery picker via `image_picker`
 - Photos saved locally to app documents directory
 
+### AI — Real-Time Clothing Detection (YOLO)
+
+- Added AI Clothing Detection to verify what kind of clothing.
+- A trained YOLOv8n model runs and draws bounding boxes around detected clothing items in real time.
+- Detected classes: jacket, shirt, Tshirt, pants, dress, skirt, short, sweater.
+
 ## Tech Stack
 
 | Layer | Package |
